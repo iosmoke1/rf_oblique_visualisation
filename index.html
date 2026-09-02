@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>Интерактивная визуализация Random and Oblique trees and forests</h1>
+      <div class="actions">
+        <button id="trainBtn" class="primary">Обучить модели</button>
+        <button id="clearBtn">Очистить</button>
+      </div>
+    </header>
+    <div class="notice" id="message" hidden></div>
+
+    <section class="workspace">
+      <aside class="panel controls">
+        <h2>Настройки</h2>
+
+        <label class="control" title="Доля точек для обучения, остальное в тест для проверки">
+          <span>Доля train <b id="trainRatioValue">90%</b></span>
+          <input id="trainRatio" type="range" min="50" max="90" value="90" step="5">
+        </label>
+
+        <label class="control" title="Сложность дерева, количество уточнений границы">
+          <span>Макс. глубина <b id="maxDepthValue">1</b></span>
+          <input id="maxDepth" type="range" min="1" max="12" value="1" step="1">
+        </label>
+
+        <label class="control" title="Минимальное число точек в конечном листе дерева">
+          <span>Минимум в листе <b id="minLeafValue">60</b></span>
+          <input id="minLeaf" type="range" min="2" max="60" value="60" step="2">
+        </label>
+
+        <label class="control" title="Размер видимой части train для каждого дерева из леса (с возвращением)">
+          <span>Bootstrap <b id="bootstrapValue">80%</b></span>
+          <input id="bootstrapRatio" type="range" min="40" max="100" value="80" step="5">
+        </label>
+
+        <label class="control" title="Размер леса">
+          <span>Количество деревьев <b id="treeCountValue">3</b></span>
+          <input id="treeCount" type="range" min="3" max="45" value="3" step="3">
+        </label>
+
+        <label class="control" title="Сколько углов в oblique-дереве при поиске разбиения">
+          <span>Направления для oblique <b id="directionCountValue">4</b></span>
+          <input id="directionCount" type="range" min="4" max="40" value="4" step="4">
+        </label>
+
+        <div class="paint-tools">
+          <label class="control" title="Диаметр кисти">
+            <span>Кисть <b id="brushSizeValue">14</b></span>
+            <input id="brushSize" type="range" min="3" max="34" value="14" step="1">
+          </label>
+          <label class="check">
+            <input id="eraser" type="checkbox">
+            <span>Ластик</span>
+          </label>
+        </div>
+      </aside>
+
+      <section class="draw-zone">
+        <div class="canvas-head">
+          <h2>Датасет</h2>
+          <span>256 x 256</span>
+        </div>
+        <canvas id="drawCanvas" width="256" height="256"></canvas>
+      </section>
+
+      <section class="results" id="results"></section>
+    </section>
+  </main>
+
+  <template id="modelCardTemplate">
+    <article class="model-card">
+      <div class="model-head">
+        <h2></h2>
+        <span class="badge"></span>
+      </div>
+      <canvas width="256" height="256"></canvas>
+      <div class="metrics"></div>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th title="Модель решила, что точка принадлежит рисунку.">Pred 1</th>
+            <th title="Модель решила, что точка принадлежит фону.">Pred 0</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th title="На самом деле точка из рисунка.">True 1</th>
+            <td data-cell="tp" title="TP: модель верно закрасила черным"></td>
+            <td data-cell="fn" title="FN: модель приняла рисунок за фон"></td>
+          </tr>
+          <tr>
+            <th title="На самом деле точка из фона.">True 0</th>
+            <td data-cell="fp" title="FP: модель приняла фон за рисунок"></td>
+            <td data-cell="tn" title="TN: модель верно оставила белым"></td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </template>
+
+  <script src="src/metrics.js"></script>
+  <script src="src/tree.js"></script>
+  <script src="src/dataset.js"></script>
+  <script src="src/drawing.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
