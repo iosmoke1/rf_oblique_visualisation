@@ -15,6 +15,9 @@ const ui = {
   directions: $('#directionCount'),
   brush: $('#brushSize'),
   eraser: $('#eraser'),
+  treeModel: $('#treeModel'),
+  treeNumber: $('#treeNumber'),
+  treeViewport: $('#treeViewport'),
 };
 
 const out = {
@@ -91,6 +94,7 @@ setupDrawing(ui.canvas, {
 
 renderModelCards();
 syncLabels();
+const treeView = setupTreeView(ui);
 
 for (const input of document.querySelectorAll("input[type='range']")) {
   input.addEventListener('input', syncLabels);
@@ -99,11 +103,13 @@ for (const input of document.querySelectorAll("input[type='range']")) {
 ui.clear.addEventListener('click', () => {
   clearCanvas(ui.canvas);
   clearResults();
+  treeView.clear();
   hideMessage();
 });
 
 ui.train.addEventListener('click', async () => {
   ui.train.disabled = true;
+  treeView.clear();
   hideMessage();
 
   try {
@@ -116,9 +122,11 @@ ui.train.addEventListener('click', async () => {
       return;
     }
 
+    const models = {};
     for (const spec of modelSpecs) {
       await waitFrame();
       const model = spec.create(settings).fit(dataset.train);
+      models[spec.id] = model;
       const card = ui.results.querySelector(`[data-model="${spec.id}"]`);
 
       drawPrediction(card.querySelector('canvas'), model);
@@ -128,6 +136,7 @@ ui.train.addEventListener('click', async () => {
         evaluate(model, dataset.test),
       );
     }
+    treeView.setModels(models);
   } catch (error) {
     showMessage('Что-то пошло не так при обучении. Очистьте холст или снизьте глубину/число деревьев');
     console.error(error);
@@ -168,7 +177,7 @@ function renderModelCards() {
     card.querySelector('h2').textContent = spec.title;
     card.querySelector('.badge').textContent = spec.badge;
     card.querySelector('.badge').title = modelHint(spec.id);
-    clearCanvas(card.querySelector('canvas'));
+    clearCanvas(card.querySelector('.prediction canvas'));
     ui.results.appendChild(fragment);
   }
 }
@@ -185,7 +194,7 @@ function modelHint(id) {
 }
 
 function clearResults() {
-  for (const canvas of ui.results.querySelectorAll('canvas')) {
+  for (const canvas of ui.results.querySelectorAll('.prediction canvas:not(.prediction-overlay)')) {
     clearCanvas(canvas);
   }
 

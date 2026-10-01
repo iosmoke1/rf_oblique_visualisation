@@ -30,7 +30,7 @@ function makeDataset(canvas, trainRatio) {
   shuffle(positives);
   shuffle(negatives);
 
-  const sampleSize = Math.min(positives.length, negatives.length, 6500);
+  const sampleSize = Math.min(positives.length, negatives.length, 32000);
   const rows = shuffle([...positives.slice(0, sampleSize), ...negatives.slice(0, sampleSize)]);
   const trainSize = Math.floor(rows.length * trainRatio);
 

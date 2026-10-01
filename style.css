@@ -22,7 +22,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -86,13 +87,21 @@ button.primary:hover {
 
 .workspace {
   display: grid;
-  grid-template-columns: 280px 310px 1fr;
+  grid-template-columns: 606px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
 }
 
+.left-workspace {
+  display: grid;
+  grid-template-columns: 280px 310px;
+  gap: 16px;
+  align-items: stretch;
+}
+
 .panel,
 .draw-zone,
+.tree-panel,
 .model-card {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -101,16 +110,22 @@ button.primary:hover {
 }
 
 .controls {
-  padding: 16px;
+  align-content: start;
+  padding: 12px;
   display: grid;
-  gap: 16px;
+  gap: 8px;
 }
 
 .control {
   display: grid;
-  gap: 7px;
+  gap: 2px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.controls h2 {
+  font-size: 15px;
 }
 
 .control span {
@@ -128,11 +143,16 @@ input[type="range"] {
   accent-color: var(--accent);
 }
 
+.controls input[type="range"] {
+  height: 16px;
+  margin: 0;
+}
+
 .paint-tools {
   border-top: 1px solid var(--line);
-  padding-top: 14px;
+  padding-top: 8px;
   display: grid;
-  gap: 12px;
+  gap: 6px;
 }
 
 .check {
@@ -140,6 +160,7 @@ input[type="range"] {
   align-items: center;
   gap: 8px;
   color: var(--muted);
+  font-size: 12px;
 }
 
 .notice {
@@ -155,6 +176,125 @@ input[type="range"] {
 
 .draw-zone {
   padding: 16px;
+}
+
+.tree-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tree-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tree-controls {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tree-controls select {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: white;
+  color: var(--ink);
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.tree-controls select {
+  min-width: 0;
+  max-width: 150px;
+}
+
+.tree-controls select[hidden] {
+  display: none;
+}
+
+.tree-viewport {
+  height: 360px;
+  overflow: hidden;
+  background: #fbfcff;
+  cursor: grab;
+  touch-action: none;
+}
+
+.tree-viewport:active {
+  cursor: grabbing;
+}
+
+.tree-viewport svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tree-link {
+  fill: none;
+  stroke: #8795ac;
+  stroke-width: 1.8;
+}
+
+.tree-branch {
+  fill: var(--muted);
+  font: 11px Inter, "Segoe UI", Arial, sans-serif;
+  text-anchor: middle;
+}
+
+.tree-node circle {
+  fill: white;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.tree-node.leaf circle {
+  fill: #e7f3ef;
+  stroke: #16836c;
+}
+
+.tree-node.collapsed circle {
+  fill: #edf3ff;
+  stroke-dasharray: 3 2;
+}
+
+.tree-node.collapsed {
+  cursor: pointer;
+}
+
+.tree-node .expand-mark {
+  fill: var(--accent);
+  font-weight: 700;
+}
+
+.tree-node text {
+  fill: var(--ink);
+  font: 12px Inter, "Segoe UI", Arial, sans-serif;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.tree-node:hover circle {
+  fill: #ffe1e1;
+  stroke: #d72b39;
+}
+
+.prediction {
+  position: relative;
+}
+
+.prediction-overlay {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
 }
 
 .canvas-head,
@@ -187,6 +327,7 @@ canvas {
 }
 
 .results {
+  grid-column: 2;
   display: grid;
   grid-template-columns: repeat(2, minmax(270px, 1fr));
   gap: 16px;
@@ -241,13 +382,13 @@ th {
   background: #fbfcff;
 }
 
-@media (max-width: 1160px) {
+@media (max-width: 1240px) {
   .workspace {
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 1fr;
   }
 
   .results {
-    grid-column: 1 / -1;
+    grid-column: 1;
   }
 }
 
@@ -261,9 +402,28 @@ th {
     display: grid;
   }
 
-  .workspace,
+  .left-workspace,
   .results {
     grid-template-columns: 1fr;
+  }
+
+  .controls,
+  .draw-zone,
+  .tree-panel {
+    grid-column: 1;
+  }
+
+  .tree-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .tree-controls {
+    width: 100%;
+  }
+
+  .tree-controls select {
+    flex: 1;
   }
 
   .actions {
